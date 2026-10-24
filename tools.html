@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<link rel="preload" href="assets/archivo.woff" as="font" type="font/woff" crossorigin>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23000'/%3E%3Cpath d='M10 40c8-10 16 10 24 0s16 10 22 0' stroke='%23EEFF41' stroke-width='6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+
+<title>Free tools · model rice-terrace hydraulics properly, for $0 · Subak Lab Bali</title>
+<meta name="description" content="Open-source tools to model a rice-terrace (subak) irrigation cascade for real: Python/SciPy, QGIS, HEC-RAS, EPA SWMM, ANUGA, OpenFOAM, Gmsh, ParaView.">
+</head><body data-page="tools">
+<nav class="top wrap">
+  <a class="brand" href="index.html">SUBAK<b>LAB</b> <span class="hand" style="font-size:20px">bali</span></a>
+  <div class="links">
+    <a href="index.html" data-k="index">The lab</a>
+    <a href="tools.html" data-k="tools" class="on" aria-current="page">Free tools</a>
+  </div>
+</nav>
+
+<main class="wrap">
+  <h2 style="margin-top:28px">The <span style="color:var(--lime)">$0</span> stack for terrace hydraulics</h2>
+  <p class="lead" style="margin:0">Everything you need to go from this browser toy to a serious model of a terrace cascade. Every tool here is free and used in research, consulting or water agencies.</p>
+  <div class="tools">
+    <div class="tool"><span class="rep">replaces MATLAB</span><h3 style="margin-top:8px">Python + NumPy / SciPy / Matplotlib</h3><p>The lumped model behind this lab (five tanks + broad-crested weirs) is a small ODE system: write <code>A·dh/dt = Q_in − Q_out − A(E+q)</code> per paddy and integrate it with <code>scipy.integrate.solve_ivp</code>.</p><a href="https://www.python.org/" rel="noopener">python.org</a><a href="https://numpy.org/" rel="noopener">numpy</a><a href="https://scipy.org/" rel="noopener">scipy</a><a href="https://matplotlib.org/" rel="noopener">matplotlib</a></div>
+    <div class="tool"><span class="rep">replaces ArcGIS</span><h3 style="margin-top:8px">QGIS</h3><p>Open-source GIS. Digitise terrace outlines from drone or satellite imagery, get paddy areas and terrace elevations from a DEM.</p><a href="https://qgis.org/" rel="noopener">qgis.org</a></div>
+    <div class="tool"><span class="rep s">free (US Army Corps of Engineers)</span><h3 style="margin-top:8px">HEC-RAS</h3><p>1-D / 2-D open-channel hydraulics with weirs, culverts and storage areas. Model the canal, the tembuku split and each paddy as a storage area linked by weirs.</p><a href="https://www.hec.usace.army.mil/software/hec-ras/" rel="noopener">hec.usace.army.mil</a></div>
+    <div class="tool"><span class="rep s">free (US EPA)</span><h3 style="margin-top:8px">EPA SWMM</h3><p>Link-node network model with storage units, weirs, orifices, evaporation and infiltration. A natural fit for a whole subak network with many terraces.</p><a href="https://www.epa.gov/water-research/storm-water-management-model-swmm" rel="noopener">epa.gov/swmm</a></div>
+    <div class="tool"><span class="rep">replaces commercial 2-D flood models</span><h3 style="margin-top:8px">ANUGA</h3><p>Open-source 2-D shallow-water solver in Python. Resolve the flow inside paddies and what happens when a bund overtops or breaches.</p><a href="https://github.com/anuga-community/anuga_core" rel="noopener">GitHub repo</a></div>
+    <div class="tool"><span class="rep">replaces Fluent / CFX</span><h3 style="margin-top:8px">OpenFOAM</h3><p>For one notch in detail: <code>interFoam</code> (VOF free surface) on a 2-D slice of the bund to check the weir coefficient and the velocity over the crest.</p><a href="https://www.openfoam.com/" rel="noopener">openfoam.com (ESI)</a><a href="https://openfoam.org/" rel="noopener">openfoam.org (Foundation)</a></div>
+    <div class="tool"><span class="rep">replaces SolidWorks / ANSYS Meshing</span><h3 style="margin-top:8px">FreeCAD + Gmsh</h3><p>Parametric geometry of a bund and notch (crest 5 cm, bund 15 cm), then a scriptable mesh for the CFD case.</p><a href="https://www.freecad.org/" rel="noopener">freecad.org</a><a href="https://gmsh.info/" rel="noopener">gmsh.info</a></div>
+    <div class="tool"><span class="rep">replaces CFD-Post / Tecplot</span><h3 style="margin-top:8px">ParaView</h3><p>Visualise the 2-D / 3-D results: free surface over the notch, velocity on the crest, depth maps over the terraces.</p><a href="https://www.paraview.org/" rel="noopener">paraview.org</a></div>
+  </div>
+  <div class="prose">
+    <h3>From this website to a "real" model of a subak</h3>
+    <ol>
+      <li><b>Survey:</b> QGIS on a drone orthophoto / DEM → paddy areas A, terrace drops, notch positions. Measure a few notch widths b and crest heights by hand.</li>
+      <li><b>Lumped model:</b> Python + SciPy, one ODE per paddy with the weir law <code>Q = C b √g H^1.5</code>. Calibrate C against a bucket-and-stopwatch flow measurement.</li>
+      <li><b>Network:</b> the same paddies as storage units + weirs in EPA SWMM or HEC-RAS, with the canal and tembuku splits upstream.</li>
+      <li><b>Failures:</b> ANUGA (2-D shallow water) for overtopping and breaches; OpenFOAM <code>interFoam</code> on a single notch for crest velocities and erosion risk.</li>
+      <li><b>Post:</b> ParaView or Matplotlib for h(t) curves, depth maps and velocity on the crest.</li>
+    </ol>
+  </div>
+  <div class="note"><b>Licence note:</b> HEC-RAS and SWMM are free public-domain software from US agencies; the rest are open source. The point isn't that commercial tools are bad. It's that you can learn, and do serious work, without paying for them.</div>
+</main>
+<footer class="wrap">
+  <p><b>About.</b> Made by <b>Francesco Andreoli</b>, mechanical engineer (ETH Zurich alumnus), filming real fluid mechanics in Bali.
+  YouTube <a href="https://www.youtube.com/@swissintech" rel="noopener">@swissintech</a> · X <a href="https://x.com/francescoswiss" rel="noopener">@francescoswiss</a> · Source on <a href="https://github.com/andreolf/subak-lab" rel="noopener">GitHub</a> (MIT)</p>
+  <p>Built with open-source tools + AI agents. Free, no sign-up, no tracking, everything runs in your browser.</p>
+  <p class="kbd">⚠️ This simulation is a simplified, educational approximation, with parameters estimated from video, not measured. Great for intuition, but not for designing real structures.</p>
+  <p class="kbd" style="opacity:.75">Also by me: <a href="https://andreolf.github.io/coconut-lab/" rel="noopener">Coconut Lab: the coconut that never escapes →</a></p>
+</footer>
+
+</body></html>

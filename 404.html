@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<link rel="preload" href="assets/archivo.woff" as="font" type="font/woff" crossorigin>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23000'/%3E%3Cpath d='M10 40c8-10 16 10 24 0s16 10 22 0' stroke='%23EEFF41' stroke-width='6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+
+<title>Bali rice terraces (subak) · Subak Lab Bali · free interactive weir-cascade simulation</title>
+<meta name="description" content="Interactive cascade of 5 Balinese rice paddies: weirs, mass balance, hydrostatic pressure, erosion. Free, no sign-up.">
+<meta property="og:title" content="Bali rice terraces (subak) · Subak Lab Bali">
+<meta property="og:description" content="Five paddies, five notches, zero pumps. Watch a Balinese terrace cascade fill and settle, then sabotage it. Free, no sign-up.">
+<meta property="og:image" content="assets/subak_photo.jpg">
+</head><body data-page="index">
+<nav class="top wrap">
+  <a class="brand" href="index.html">SUBAK<b>LAB</b> <span class="hand" style="font-size:20px">bali</span></a>
+  <div class="links">
+    <a href="index.html" data-k="index" class="on" aria-current="page">The lab</a>
+    <a href="tools.html" data-k="tools">Free tools</a>
+  </div>
+</nav>
+
+<main class="wrap">
+  <h1 style="margin:28px 0 10px;font-size:clamp(30px,5vw,52px)">Bali rice terraces <span style="color:var(--lime)">(subak)</span></h1>
+  <p class="lead" style="margin:0">A thousand-year-old water network with no pumps and no electronics. Every paddy is a tank, and every notch in a bund is a small weir. Open the canal and watch five terraces fill and settle on their own. Then sabotage them.</p>
+  <div class="lab">
+    <div>
+      <div class="stage" id="stage"><canvas id="sec"></canvas></div>
+      <div class="stage" style="margin-top:10px"><canvas id="chart"></canvas></div>
+    </div>
+    <aside class="panel">
+      <div id="status" class="status mid">FILLING</div>
+      <div class="nums">
+        <div class="num"><b id="n-p">–</b><i>floor pressure ρgh (selected)</i></div>
+        <div class="num"><b id="n-h">–</b><i>depth h (selected)</i></div>
+        <div class="num"><b id="n-H">–</b><i>head over notch H</i></div>
+        <div class="num"><b id="n-H0">–</b><i>steady head H₀</i></div>
+        <div class="num"><b id="n-q">–</b><i>outflow to river</i></div>
+        <div class="num"><b id="n-tau">–</b><i>settling time τ = A/(dQ/dh)</i></div>
+        <div class="num"><b id="n-vol">–</b><i>water stored</i></div>
+        <div class="num"><b id="n-t">–</b><i>simulated time</i></div>
+      </div>
+      <div class="ctl"><label for="Qin">Canal inflow Q_in <span id="Qin-v"></span></label><input id="Qin" type="range" min="0" max="6" step="0.1" value="1"></div>
+      <div class="ctl"><label for="b">Notch width b <span id="b-v"></span></label><input id="b" type="range" min="5" max="50" step="1" value="20"></div>
+      <div class="ctl"><label for="A">Paddy area A <span id="A-v"></span></label><input id="A" type="range" min="50" max="600" step="10" value="200"></div>
+      <div class="ctl"><label for="spd">Time speed <span id="spd-v"></span></label><input id="spd" type="range" min="1" max="90" step="1" value="30"></div>
+      <div class="ctl"><label for="tgt">Target paddy</label>
+        <select id="tgt" style="width:100%;background:#000;color:#fff;border:1px solid #333;border-radius:8px;padding:8px;font-family:inherit"><option value="1">Paddy 1 (top)</option><option value="2">Paddy 2</option><option value="3">Paddy 3</option><option value="4">Paddy 4</option><option value="5">Paddy 5 (bottom)</option></select></div>
+      <div class="btns">
+        <button id="block" class="btn ghost sm" aria-pressed="false">Block notch</button>
+        <button id="stones" class="btn ghost sm" aria-pressed="false">Remove stones</button>
+        <button id="tem" class="btn ghost sm" aria-pressed="false">Open tembuku divider</button>
+      </div>
+      <div class="ctl" id="share-row" style="display:none;margin-top:10px"><label for="share">Share kept by this subak <span id="share-v"></span></label><input id="share" type="range" min="0.1" max="0.9" step="0.05" value="0.5"><small>a tembuku splits the canal in proportion to the slot widths</small></div>
+      <div class="btns" style="margin-top:10px">
+        <button id="empty" class="btn sm">Drain &amp; refill</button>
+        <button id="full" class="btn ghost sm">Start at steady state</button>
+        <button id="pause" class="btn ghost sm" aria-pressed="false">❚❚ Pause</button>
+      </div>
+    </aside>
+  </div>
+  <div class="note"><b>Break-it challenges.</b> ① Block notch 2: the paddy rises to the bund top, overtops along the whole bund (erosion!), and the paddies below go dry until it spills. ② Remove the stones from paddy 2: the bare-soil sill erodes, the paddy drains, and a pulse hits the paddies below. ③ Open the tembuku and give away half the water: the head over each notch drops only ~37% (H ∝ Q^(2/3)) and, thanks to the fixed 5 cm crest, the water depth drops just ~11%. That's why the system is both fair and robust.</div>
+
+  <div class="twocol" style="margin-top:26px">
+    <div class="prose">
+      <h3>The physics, in three lines</h3>
+      <p><b>1 · Each notch is a broad-crested weir.</b> Over a sill the flow goes critical, so the discharge only depends on the head H above the crest:</p>
+      <span class="eq eqblock">Q = C · b · √g · H^(3/2),   C = (2/3)^(3/2) ≈ 0.54</span>
+      <p><b>2 · Each paddy is a tank</b> (lumped mass balance, with evaporation E ≈ 5 mm/day and percolation q ≈ 1.5 mm/day through the compacted clay):</p>
+      <span class="eq eqblock">A · dh/dt = Q_in − Q_out − A·(E + q)</span>
+      <p>Linearise around the steady state and you get a first-order system with time constant <span class="eq">τ = A / (dQ/dh) = A·H₀ / (1.5·Q)</span>, about 45 minutes for A = 200 m² and Q = 1 L/s. That's the settling you see in the h(t) curves.</p>
+      <p><b>3 · Hydrostatics.</b> The free surface sits at atmospheric pressure, so the gauge pressure at the floor is just <span class="eq">p = ρ g h ≈ 1000 · 9.81 · 0.07 ≈ 0.7 kPa</span>. Every terrace has the same floor pressure at a different elevation.</p>
+      <p><b>Erosion (toy model).</b> Flow over the sill is critical, so u = √(g·2H/3). Bare soil starts eroding above ~0.25 m/s, while stone armour holds up to ~1.5 m/s (assumed). Without the stones, the crest drops and the notch widens over time.</p>
+    </div>
+    <div>
+      <figure class="photo"><img src="assets/subak_photo.jpg" alt="Francesco's photo of Balinese rice terraces with water cascading between levels" loading="lazy"><figcaption>The terraces I photographed in Bali. Water from the jungle canal spills from paddy to paddy through small notches in the bunds.</figcaption></figure>
+      <figure class="photo" style="margin-top:14px"><img src="assets/subak_sketch.jpg" alt="Hand-drawn cross-section of the terrace cascade" loading="lazy"><figcaption>Hand-sketch cross-section from the analysis (Python + matplotlib xkcd mode).</figcaption></figure>
+    </div>
+  </div>
+  <div class="note"><b>Educational approximation.</b> Every paddy is a well-mixed tank with a flat surface. There's no flow inside the paddy, no seepage through the bunds, no rain, a single weir coefficient, and an invented erosion law. Areas, widths and crest heights are estimates (A = 200 m², b = 20 cm, crest 5 cm, bund 15 cm). Real subak water is also governed by water temples and farmer cooperatives, which no equation captures! Want to go further? See the <a href="tools.html">free tools and a path to a real model</a>.</div>
+</main>
+<footer class="wrap">
+  <p><b>About.</b> Made by <b>Francesco Andreoli</b>, mechanical engineer (ETH Zurich alumnus), filming real fluid mechanics in Bali.
+  YouTube <a href="https://www.youtube.com/@swissintech" rel="noopener">@swissintech</a> · X <a href="https://x.com/francescoswiss" rel="noopener">@francescoswiss</a> · Source on <a href="https://github.com/andreolf/subak-lab" rel="noopener">GitHub</a> (MIT)</p>
+  <p>Built with open-source tools + AI agents. Free, no sign-up, no tracking, everything runs in your browser.</p>
+  <p class="kbd">⚠️ This simulation is a simplified, educational approximation, with parameters estimated from video, not measured. Great for intuition, but not for designing real structures.</p>
+  <p class="kbd" style="opacity:.75">Also by me: <a href="https://andreolf.github.io/coconut-lab/" rel="noopener">Coconut Lab: the coconut that never escapes →</a></p>
+</footer>
+
+<script type="module" src="js/subak.js"></script>
+</body></html>
